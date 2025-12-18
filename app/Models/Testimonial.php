@@ -8,6 +8,11 @@ class Testimonial extends Model
 {
     protected $fillable = [
         'name',
+        'email',
+        'whatsapp',
+        'passing_year',
+        'category',
+        'location',
         'profession',
         'testimonial',
         'image',
@@ -17,6 +22,6 @@ class Testimonial extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-        'order' => 'integer',
+        'passing_year' => 'integer',
     ];
 }

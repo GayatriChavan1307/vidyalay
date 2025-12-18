@@ -60,7 +60,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}" href="{{ route('admin.testimonials.index') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.testimonial.*') ? 'active' : '' }}" href="{{ route('admin.testimonial.index') }}">
                                 <i class="bi bi-chat-quote"></i> Testimonials
                             </a>
                         </li>

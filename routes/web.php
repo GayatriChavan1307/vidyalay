@@ -28,6 +28,8 @@ Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/team', [HomeController::class, 'team'])->name('team');
 Route::get('/testimonial', [HomeController::class, 'testimonial'])->name('testimonial');
+Route::get('/alumni', [HomeController::class, 'alumni'])->name('alumni');
+Route::post('/alumni/store', [HomeController::class, 'alumniStore'])->name('alumni.store');
 // Add this line with your other routes
 Route::get('/faculty-members/{category}', [HomeController::class, 'getFacultyByCategory'])
      ->name('faculty.members.category');
@@ -48,7 +50,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('gallery', GalleryController::class);
     Route::resource('team', TeamController::class);
     Route::resource('faculty', FacultyController::class);
-    Route::resource('testimonials', TestimonialController::class);
+    Route::resource('testimonial', TestimonialController::class);
     Route::resource('pages', PageController::class);
     Route::resource('contact-info', ContactInfoController::class);
 });

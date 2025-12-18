@@ -10,6 +10,7 @@ use App\Models\TeamMember;
 use App\Models\Testimonial;
 use App\Models\Page;
 use App\Models\FacultyMember;
+use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
@@ -34,9 +35,51 @@ class HomeController extends Controller
         return view('history');
     }
 
-    public function alumni()
+   public function alumni()
     {
-        return view('alumini');
+        $approvedAlumni = Testimonial::where('is_active', true)
+                                     ->orderBy('order')
+                                     ->get();
+
+        return view('alumini', compact('approvedAlumni'));
+    }
+
+    public function alumniStore(Request $request)
+    {
+        $validated = $request->validate([
+            'fullName'     => 'required|string|max:255',
+            'email'        => 'required|email|unique:testimonials,email',
+            'whatsapp'     => 'required|digits:10',
+            'passingYear'  => 'required|integer|min:1950|max:' . (date('Y') + 1),
+            'category'     => 'required|in:SSC,HSC,HSC-Commerce',
+            'location'     => 'nullable|string|max:255',
+            'designation'  => 'nullable|string|max:255',
+            'profilePhoto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'testimonial'  => 'nullable|string',
+        ]);
+
+        $alumni = new Testimonial();
+        $alumni->name         = $validated['fullName'];
+        $alumni->email        = $validated['email'];
+        $alumni->whatsapp     = $validated['whatsapp'];
+        $alumni->passing_year = $validated['passingYear'];
+        $alumni->category     = $validated['category'];
+        $alumni->location     = $validated['location'] ?? null;
+        $alumni->profession   = $validated['designation'] ?? 'Alumni';
+        $alumni->testimonial  = $validated['testimonial'] ?? 'माजी विद्यार्थी';
+        $alumni->order        = 999;
+        $alumni->is_active    = false; // Pending approval
+
+        if ($request->hasFile('profilePhoto')) {
+            $file = $request->file('profilePhoto');
+            $filename = Str::slug($validated['fullName'] . '-' . time()) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('assets/img/alumni'), $filename);
+            $alumni->image = 'assets/img/alumni/' . $filename;
+        }
+
+        $alumni->save();
+
+        return back()->with('success', 'धन्यवाद! आपली नोंदणी यशस्वी झाली. प्रशासकाच्या मंजुरीनंतर ती प्रदर्शित होईल.');
     }
 
     public function admissions()
@@ -82,11 +125,11 @@ class HomeController extends Controller
         return view('team', compact('teamMembers'));
     }
 
-    public function testimonial()
-    {
-        $testimonials = Testimonial::where('is_active', true)->orderBy('order')->get();
-        return view('testimonial', compact('testimonials'));
-    }
+    // public function testimonial()
+    // {
+    //     $testimonials = Testimonial::where('is_active', true)->orderBy('order')->get();
+    //     return view('testimonial', compact('testimonials'));
+    // }
     
     public function faculty()
 {
